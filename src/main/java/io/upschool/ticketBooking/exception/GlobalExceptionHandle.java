@@ -26,10 +26,10 @@ public class GlobalExceptionHandle extends ResponseEntityExceptionHandler {
                                                                    HttpHeaders headers,
                                                                    HttpStatusCode status,
                                                                    WebRequest request) {
-        final var errorMessage=
+        final var errorMessage =
                 MessageFormat.format("No handler found for {0} {1} ", ex.getHttpMethod(), ex.getRequestURL());
         System.out.println(errorMessage);
-        var response= BaseResponse.<Object>builder()
+        var response = BaseResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .isSuccess(false)
                 .build();
@@ -115,6 +115,7 @@ public class GlobalExceptionHandle extends ResponseEntityExceptionHandler {
         System.out.println(webRequest.toString());
         return baseResponseService.createErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
+
     @ExceptionHandler(FlightValidationException.class)
     public ResponseEntity<BaseResponse<?>> handleFlightValidationException(
             final FlightValidationException exception, final WebRequest webRequest) {
@@ -123,6 +124,7 @@ public class GlobalExceptionHandle extends ResponseEntityExceptionHandler {
         return baseResponseService.createErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
 
     }
+
     @ExceptionHandler(FlightAlreadySaveException.class)
     public ResponseEntity<BaseResponse<?>> handleFlightAlreadySaveException(
             final FlightAlreadySaveException exception, final WebRequest webRequest) {

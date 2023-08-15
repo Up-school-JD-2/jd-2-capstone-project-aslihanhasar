@@ -4,6 +4,7 @@ import io.upschool.ticketBooking.dto.request.RouteSaveRequest;
 import io.upschool.ticketBooking.dto.response.*;
 import io.upschool.ticketBooking.entity.Airport;
 import io.upschool.ticketBooking.entity.Route;
+import io.upschool.ticketBooking.exception.RouteAlreadySaveException;
 import io.upschool.ticketBooking.exception.RouteNotFoundException;
 import io.upschool.ticketBooking.exception.RouteValidationException;
 import io.upschool.ticketBooking.repository.RouteRepository;
@@ -61,7 +62,7 @@ public class RouteService {
                         departureDate, departureTime,
                         request.getDepartureAirportId(), request.getArrivalAirportId());
         if (routeExists) {
-            throw new RouteValidationException("Route already exists.");
+            throw new RouteAlreadySaveException("Route already exists.");
         }
     }
 
