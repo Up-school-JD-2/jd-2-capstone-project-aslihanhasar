@@ -16,15 +16,27 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
+/**
+ * The RouteService class is a service responsible for managing operations related to flight routes.
+ * It interacts with the RouteRepository for data storage and utilizes the AirportService
+ * for airport-related operations.
+ */
 @Service
 @RequiredArgsConstructor
 public class RouteService {
     private final RouteRepository routeRepository;
     private final AirportService airportService;
 
+    /**
+     * Saves a flight route based on the provided RouteSaveRequest.
+     *
+     * @param request The RouteSaveRequest containing the details of the route to be saved.
+     * @return A RouteSaveResponse indicating the result of the save operation.
+     * @throws RouteValidationException  If any of the required fields in the request are null or empty.
+     * @throws RouteAlreadySaveException If a route with the same departure and arrival airports, dates, and times already exists.
+     */
     public RouteSaveResponse save(RouteSaveRequest request) {
         validateRouteSaveRequest(request);
         airportService.checkIsAirportExist(request.getDepartureAirportId());
@@ -34,6 +46,14 @@ public class RouteService {
         return convertRouteToResponse(savedRoute);
     }
 
+    /**
+     * Retrieves a list of routes based on the provided departure and arrival keys.
+     *
+     * @param departureKey The search key for departure airport's location.
+     * @param arrivalKey   The search key for arrival airport's location.
+     * @return A list of RouteSearchResponse objects representing the retrieved routes.
+     * @throws RouteNotFoundException If no routes are found matching the search criteria.
+     */
     public List<RouteSearchResponse> getAllRoutes(String departureKey, String arrivalKey) {
         List<Route> routes;
         if (departureKey.isEmpty() && arrivalKey.isEmpty()) {
@@ -49,11 +69,24 @@ public class RouteService {
                 .toList();
     }
 
+    /**
+     * Retrieves a Route based on the provided ID.
+     *
+     * @param id The ID of the Route to retrieve.
+     * @return The retrieved Route.
+     * @throws RouteNotFoundException If no Route is found with the provided ID.
+     */
     protected Route getRouteById(Long id) {
         return routeRepository.findById(id)
                 .orElseThrow(() -> new RouteNotFoundException("Route not found."));
     }
 
+    /**
+     * Checks if a route with the provided departure and arrival details already exists.
+     *
+     * @param request The RouteSaveRequest containing the details of the route to check.
+     * @throws RouteAlreadySaveException If a route with the same departure and arrival details already exists.
+     */
     protected void checkRouteIsAlreadySaved(RouteSaveRequest request) {
         LocalDate departureDate = DateUtils.parseLocalDate(request.getDepartureDate());
         LocalTime departureTime = DateUtils.parseLocalTime(request.getDepartureTime());
@@ -66,6 +99,12 @@ public class RouteService {
         }
     }
 
+    /**
+     * Checks if a route with the provided ID exists.
+     *
+     * @param routeId The ID of the route to check for existence.
+     * @throws RouteNotFoundException If no route is found with the provided ID.
+     */
     protected void checkIsRouteExist(Long routeId) {
         boolean existRoute = routeRepository.existsById(routeId);
         if (!existRoute) {
@@ -73,6 +112,12 @@ public class RouteService {
         }
     }
 
+    /**
+     * Converts a Route entity to a RouteSaveResponse object.
+     *
+     * @param route The Route entity to be converted.
+     * @return A RouteSaveResponse object representing the converted entity.
+     */
     protected RouteSaveResponse convertRouteToResponse(Route route) {
         Airport departureAirport = route.getDepartureAirport();
         Airport arrivalAirport = route.getArrivalAirport();

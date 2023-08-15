@@ -18,6 +18,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+/**
+ * The FlightService class is a service that handles operations related to flights,
+ * such as saving, retrieving, and managing flight data. It interacts with
+ * the FlightRepository for data storage and relies on the RouteService and
+ * AirlineService for route and airline-related operations.
+ */
 @Service
 @RequiredArgsConstructor
 public class FlightService {
@@ -25,6 +31,14 @@ public class FlightService {
     private final RouteService routeService;
     private final AirlineService airlineService;
 
+    /**
+     * Saves a flight based on the provided FlightSaveRequest.
+     *
+     * @param request The FlightSaveRequest containing the details of the flight to be saved.
+     * @return A FlightSaveResponse indicating the result of the save operation.
+     * @throws FlightValidationException  If any of the provided request fields are null or invalid.
+     * @throws FlightAlreadySaveException If a flight with the same route, departure date, and airline already exists.
+     */
     public FlightSaveResponse save(FlightSaveRequest request) {
         validateFlightSaveRequest(request);
         checkRouteAndAirlineExistence(request);
@@ -32,6 +46,15 @@ public class FlightService {
         return convertFlightToResponse(savedFlight);
     }
 
+    /**
+     * Retrieves a list of flights based on the provided departure and arrival keys and departure date.
+     *
+     * @param departureKey  The search key for departure airport's location.
+     * @param arrivalKey    The search key for arrival airport's location.
+     * @param departureDate The departure date to filter flights by.
+     * @return A list of FlightSearchResponse objects representing the retrieved flights.
+     * @throws FlightNotFoundException If no flights are found matching the search criteria.
+     */
     public List<FlightSearchResponse> getAllFlights(String departureKey,
                                                     String arrivalKey,
                                                     String departureDate) {
@@ -52,6 +75,13 @@ public class FlightService {
                 .toList();
     }
 
+    /**
+     * Reserves the specified number of seats on the given flight if enough seats are available.
+     *
+     * @param flight         The Flight for which to reserve seats.
+     * @param requestedSeats The number of seats to reserve.
+     * @throws NotAvailableSeatException If there are not enough available seats for the reservation.
+     */
     protected void reserveSeats(Flight flight, int requestedSeats) {
         boolean availableSeats = isAvailableSeats(flight, requestedSeats);
         if (!availableSeats) {
@@ -62,6 +92,12 @@ public class FlightService {
         flightRepository.save(flight);
     }
 
+    /**
+     * Updates the available seats count on the given flight by adding the specified number of seats.
+     *
+     * @param flight         The Flight for which to update available seats.
+     * @param requestedSeats The number of seats to add to the available seats count.
+     */
     protected void updateAvailableSeats(Flight flight, int requestedSeats) {
         int currentAvailableSeats = flight.getRemainingSeats();
         int updatedAvailableSeats = currentAvailableSeats + requestedSeats;
@@ -69,11 +105,24 @@ public class FlightService {
         flightRepository.save(flight);
     }
 
+    /**
+     * Retrieves a Flight based on the provided ID.
+     *
+     * @param id The ID of the Flight to retrieve.
+     * @return The retrieved Flight.
+     * @throws FlightNotFoundException If no Flight is found with the provided ID.
+     */
     protected Flight getFlightById(Long id) {
         return flightRepository.findById(id)
                 .orElseThrow(() -> new FlightNotFoundException("Flight not found."));
     }
 
+    /**
+     * Converts a Flight entity to a FlightSaveResponse object.
+     *
+     * @param flight The Flight entity to be converted.
+     * @return A FlightSaveResponse object representing the converted entity.
+     */
     protected FlightSaveResponse convertFlightToResponse(Flight flight) {
         return FlightSaveResponse
                 .builder()
