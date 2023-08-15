@@ -13,10 +13,10 @@
 - Havaalanı eklenebilmeli ve aranabilmeli.
 - Rota eklenebilmeli ve aranabilmeli.
 - Havayolu şirketine uçuş tanımlanabilmeli ve aranabilmeli.
-- Bilet satın alınabilmeli:
+-[ Bilet satın alınabilmeli:
     - Satın alma işlemi sırasında kredi kartı bilgileri maskelenmeli. (Örneğin "4221161122330005" -> "422116******0005").
     - Kredi kartı numarasının aralarında boşluklar ya da ayraçlar olması gibi durumları da kapsayacak şekilde geliştirme yapılmalı. Örneğin; Request’te kart numarası farklı formatlarda da gelse (Örnek: "4221-1611-2233-0005", "4221,1611,2233,0005"), kart bilgisi beklenen şekilde ("422116******0005") maskelenerek satın alma işlemine alınmalı.
-    - Bilet numarası ile arama yapılabilmeli ve bilet iptali yapılabilmeli.
+    - Bilet numaraseı ile arama yapılabilmeli ve bilet iptali yapılabilmli.]()
 - Silme gerektiren işlemlerde soft delete yapılması gereklidir.
 - Global Exception Handling yapısının kurulması.
 - API response’larının ortak bir yapı üzerinden dönülmesi.
